@@ -1,0 +1,38 @@
+<?php
+
+namespace Tests;
+
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Rockbuzz\LaraComments\CommentsServiceProvider;
+
+class TestCase extends OrchestraTestCase
+{
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->loadLaravelMigrations(['--database' => 'testing']);
+
+        $this->loadMigrationsFrom([
+            '--database' => 'testing',
+            '--path' => realpath(__DIR__ . '/../src/database'),
+        ]);
+
+        $this->loadMigrationsFrom([
+            '--database' => 'testing',
+            '--path' => realpath(__DIR__ . '/migrations'),
+        ]);
+    }
+
+
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('database.default', 'testing');
+    }
+
+
+    protected function getPackageProviders($app)
+    {
+        return [CommentsServiceProvider::class];
+    }
+}
