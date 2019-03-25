@@ -19,6 +19,10 @@ $ composer require rockbuzz/lara-comments
 We need to create the table for comments.
 
 ```bash
+php artisan vendor:publish --provider="Rockbuzz\LaraComments\CommentsServiceProvider"
+```
+
+```bash
 php artisan migrate
 ```
 ## Add Commentable trait to models
@@ -32,10 +36,6 @@ class Post extends Model
 {
     use Commentable;
 }
-```
-
-```bash
-php artisan vendor:publish --provider="Rockbuzz\LaraComments\CommentsServiceProvider"
 ```
 
 ## License
