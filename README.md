@@ -14,9 +14,28 @@ PHP: >=7.1
 $ composer require rockbuzz/lara-comments
 ```
 
-## Configuration
-```php
+## Run migrations
 
+We need to create the table for comments.
+
+```bash
+php artisan migrate
+```
+## Add Commentable trait to models
+
+Add the `Commentable` trait to the model for which you want to enable comments for:
+
+```php
+use Rockbuzz\LaraComments\Commentable;
+
+class Post extends Model
+{
+    use Commentable;
+}
+```
+
+```bash
+php artisan vendor:publish --provider="Rockbuzz\LaraComments\CommentsServiceProvider"
 ```
 
 ## License

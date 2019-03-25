@@ -31,16 +31,16 @@ class Comment extends Model
 
     public function scopePending($query): Builder
     {
-        return $query->whereStatus(State::PENDING);
+        return $query->whereState(State::PENDING);
     }
 
     public function scopeApproved($query): Builder
     {
-        return $query->whereStatus(State::APPROVED);
+        return $query->whereState(State::APPROVED);
     }
 
     public function scopeUnapproved($query): Builder
     {
-        return $query->whereStatus(State::UNAPPROVED);
+        return $query->whereState(State::UNAPPROVED);
     }
 }
