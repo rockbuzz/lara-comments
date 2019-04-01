@@ -1,6 +1,6 @@
 {
   "name": "rockbuzz/lara-comments",
-  "description": "",
+  "description": "Lara Comments is a package of Laravel 5.5 or higher that includes comments there are features like Posts, Boxes, etc ...",
   "keywords": [
     "laravel",
     "comments"
@@ -9,11 +9,11 @@
   "authors": [
     {
       "name": "TiagoDevWeb",
-      "email": "tiago.desenvolvedorweb@gmail.com"
+      "email": "tiago@rockbuzz.com.br"
     },
     {
       "name": "Paulo Henrique P. Scheuermann",
-      "email": "paetzold44@gmail.com"
+      "email": "paulo@rockbuzz.com.br"
     }
   ],
   "autoload": {

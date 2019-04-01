@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use Rockbuzz\LaraComments\CommentsService;
+use Rockbuzz\LaraComments\CommentsRepository;
 use Rockbuzz\LaraComments\State;
 use Tests\Models\Post;
 use Tests\Models\User;
@@ -32,7 +32,7 @@ class CommentTest extends TestCase
             'state' => State::PENDING
         ]);
 
-        $controller = new CommentsService();
+        $controller = new CommentsRepository();
         $controller->approve($comment);
 
         $this->assertDatabaseHas('comments', [
@@ -62,7 +62,7 @@ class CommentTest extends TestCase
             'state' => State::APPROVED
         ]);
 
-        $controller = new CommentsService();
+        $controller = new CommentsRepository();
         $controller->unapprove($comment);
 
         $this->assertDatabaseHas('comments', [
@@ -92,7 +92,7 @@ class CommentTest extends TestCase
             'state' => State::APPROVED
         ]);
 
-        $controller = new CommentsService();
+        $controller = new CommentsRepository();
         $controller->delete($comment);
 
         $this->assertDatabaseMissing('comments', [

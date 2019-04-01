@@ -38,6 +38,20 @@ class Post extends Model
 }
 ```
 
+## Methods
+
+```php
+$repository = new Rockbuzz\LaraComments\CommentsRepository;
+$repository->all(string $commentableType): Builder
+$repository->pending(string $commentableType): Builder
+$repository->approved(string $commentableType): Builder
+$repository->unapproved(string $commentableType): Builder
+$repository->approve(Comment $comment)
+$repository->unapprove(Comment $comment)
+$repository->delete(Comment $comment)
+```
+
+
 ## License
 
-The Tdw RDB is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The Lara Comments is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
