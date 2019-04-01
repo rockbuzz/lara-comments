@@ -2,7 +2,7 @@
 
 namespace Rockbuzz\LaraComments;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class CommentsRepository
 {
