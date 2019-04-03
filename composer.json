@@ -42,7 +42,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Rockbuzz\\LaraComments\\CommentsServiceProvider"
+        "Rockbuzz\\LaraComments\\ServiceProvider"
       ]
     }
   }
