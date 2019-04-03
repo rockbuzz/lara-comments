@@ -2,9 +2,9 @@
 
 namespace Rockbuzz\LaraComments;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\ServiceProvider as SupportServiceProvider;
 
-class CommentsServiceProvider extends ServiceProvider
+class ServiceProvider extends SupportServiceProvider
 {
     public function boot()
     {

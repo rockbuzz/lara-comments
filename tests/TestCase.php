@@ -3,7 +3,7 @@
 namespace Tests;
 
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Rockbuzz\LaraComments\CommentsServiceProvider;
+use Rockbuzz\LaraComments\ServiceProvider;
 
 class TestCase extends OrchestraTestCase
 {
@@ -33,6 +33,6 @@ class TestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app)
     {
-        return [CommentsServiceProvider::class];
+        return [ServiceProvider::class];
     }
 }

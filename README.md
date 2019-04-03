@@ -19,7 +19,7 @@ $ composer require rockbuzz/lara-comments
 We need to create the table for comments.
 
 ```bash
-php artisan vendor:publish --provider="Rockbuzz\LaraComments\CommentsServiceProvider"
+php artisan vendor:publish --provider="Rockbuzz\LaraComments\ServiceProvider"
 ```
 
 ```bash
@@ -41,14 +41,15 @@ class Post extends Model
 ## Methods
 
 ```php
-$repository = new Rockbuzz\LaraComments\CommentsRepository;
-$repository->all(string $commentableType): Builder
-$repository->pending(string $commentableType): Builder
-$repository->approved(string $commentableType): Builder
-$repository->unapproved(string $commentableType): Builder
-$repository->approve(Comment $comment)
-$repository->unapprove(Comment $comment)
-$repository->delete(Comment $comment)
+$comment = new Rockbuzz\LaraComments\Comment;
+//scope
+$comment->approved(string $commentableType = null): Builder
+$comment->pending(string $commentableType = null): Builder
+$comment->disapproved(string $commentableType = null): Builder
+//change state
+$comment->approve()
+$comment->disapprove()
+$comment->asPending()
 ```
 
 

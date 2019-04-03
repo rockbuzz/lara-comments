@@ -11,7 +11,7 @@ class Comment extends Model
 
     public function commenter()
     {
-        return $this->belongsTo(config('comments.commenter'));
+        return $this->belongsTo(config('comments.models.commenter'));
     }
 
     public function commentable()
@@ -29,18 +29,51 @@ class Comment extends Model
         return $this->belongsTo(Comment::class, 'comment_id');
     }
 
-    public function scopePending($query): Builder
+    public function approve()
     {
-        return $query->whereState(State::PENDING);
+        return $this->update(['state' => State::APPROVED]);
     }
 
-    public function scopeApproved($query): Builder
+    public function disapprove()
     {
-        return $query->whereState(State::APPROVED);
+        return $this->update(['state' => State::DISAPPROVED]);
     }
 
-    public function scopeUnapproved($query): Builder
+    public function asPending()
     {
-        return $query->whereState(State::UNAPPROVED);
+        return $this->update(['state' => State::PENDING]);
+    }
+
+    public function scopePending($query, string $commentableType = null): Builder
+    {
+        $builder = $query->whereState(State::PENDING);
+
+        if ($commentableType) {
+            $builder->where('commentable_type', $commentableType);
+        }
+
+        return $builder;
+    }
+
+    public function scopeApproved($query, string $commentableType = null): Builder
+    {
+        $builder = $query->whereState(State::APPROVED);
+
+        if ($commentableType) {
+            $builder->where('commentable_type', $commentableType);
+        }
+
+        return $builder;
+    }
+
+    public function scopeDisapproved($query, string $commentableType = null): Builder
+    {
+        $builder = $query->whereState(State::DISAPPROVED);
+
+        if ($commentableType) {
+            $builder->where('commentable_type', $commentableType);
+        }
+
+        return $builder;
     }
 }

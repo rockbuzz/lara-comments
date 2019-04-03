@@ -6,7 +6,7 @@ trait Commentable
 {
     public function comments()
     {
-        return $this->morphMany(Comment::class, 'commentable')
+        return $this->morphMany(config('comments.models.comment'), 'commentable')
             ->whereNull('comment_id');
     }
 }
