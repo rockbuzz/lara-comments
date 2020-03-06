@@ -2,9 +2,13 @@
 
 namespace Tests;
 
+use Illuminate\Support\Facades\Event;
 use Tests\Models\{Post, User};
 use Rockbuzz\LaraComments\Comment;
 use Illuminate\Support\Facades\Config;
+use Rockbuzz\LaraComments\Events\ApprovedEvent;
+use Rockbuzz\LaraComments\Events\AsPendingEvent;
+use Rockbuzz\LaraComments\Events\DisapprovedEvent;
 use Rockbuzz\LaraComments\Enums\{Status};
 use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo, BelongsTo};
 
@@ -63,11 +67,17 @@ class CommentTest extends TestCase
 
     public function testCommentStatus()
     {
+        Event::fake([AsPendingEvent::class, ApprovedEvent::class, DisapprovedEvent::class]);
+
         $comment = $this->create(Comment::class, [
             'status' => Status::APPROVED
         ]);
 
         $comment->asPending();
+
+        Event::assertDispatched(AsPendingEvent::class, function ($e) use ($comment) {
+            return $e->comment->id === $comment->id;
+        });
 
         $this->assertTrue($comment->isPending());
         $this->assertFalse($comment->isApproved());
@@ -75,11 +85,19 @@ class CommentTest extends TestCase
 
         $comment->approve();
 
+        Event::assertDispatched(ApprovedEvent::class, function ($e) use ($comment) {
+            return $e->comment->id === $comment->id;
+        });
+
         $this->assertFalse($comment->isPending());
         $this->assertTrue($comment->isApproved());
         $this->assertFalse($comment->isDisapproved());
 
         $comment->disapprove();
+
+        Event::assertDispatched(DisapprovedEvent::class, function ($e) use ($comment) {
+            return $e->comment->id === $comment->id;
+        });
 
         $this->assertFalse($comment->isPending());
         $this->assertFalse($comment->isApproved());

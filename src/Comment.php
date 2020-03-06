@@ -6,6 +6,7 @@ use Rockbuzz\LaraUuid\Traits\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Rockbuzz\LaraComments\Enums\Status;
 use Illuminate\Database\Eloquent\Builder;
+use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, DisapprovedEvent};
 
 class Comment extends Model
 {
@@ -68,7 +69,9 @@ class Comment extends Model
 
     public function asPending()
     {
-        return $this->update(['status' => Status::PENDING]);
+        $this->update(['status' => Status::PENDING]);
+
+        event(new AsPendingEvent($this));
     }
 
     public function isPending()
@@ -79,6 +82,8 @@ class Comment extends Model
     public function approve()
     {
         $this->update(['status' => Status::APPROVED]);
+
+        event(new ApprovedEvent($this));
     }
 
     public function isApproved()
@@ -88,7 +93,9 @@ class Comment extends Model
 
     public function disapprove()
     {
-        return $this->update(['status' => Status::DISAPPROVED]);
+        $this->update(['status' => Status::DISAPPROVED]);
+
+        event(new DisapprovedEvent($this));
     }
 
     public function isDisapproved()
