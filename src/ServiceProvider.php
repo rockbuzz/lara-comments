@@ -34,6 +34,6 @@ class ServiceProvider extends SupportServiceProvider
 
     private function hasMigrationInProject(string $path, Filesystem $filesystem)
     {
-        return count($filesystem->glob($path . '*_create_pricing_tables.php')) > 0;
+        return count($filesystem->glob($path . '*_create_comments_table.php')) > 0;
     }
 }
