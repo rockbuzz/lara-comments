@@ -2,8 +2,8 @@
 
 namespace Tests\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Rockbuzz\LaraComments\Commentable;
+use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {

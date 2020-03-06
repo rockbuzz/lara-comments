@@ -2,12 +2,49 @@
 
 namespace Rockbuzz\LaraComments;
 
-use Illuminate\Database\Eloquent\Builder;
+use Rockbuzz\LaraUuid\Traits\Uuid;
 use Illuminate\Database\Eloquent\Model;
+use Rockbuzz\LaraComments\Enums\Status;
+use Illuminate\Database\Eloquent\Builder;
 
 class Comment extends Model
 {
-    protected $guarded = [];
+    use Uuid;
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    protected $fillable = [
+        'title',
+        'body',
+        'likes',
+        'type',
+        'status',
+        'comment_id',
+        'commentable_id',
+        'commentable_type',
+        'commenter_id',
+        'commenter_type'
+    ];
+
+    protected $casts = [
+        'id' => 'string'
+    ];
+
+    protected $dates = [
+        'deleted_at',
+        'created_at',
+        'updated_at'
+    ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->setTable(config('comments.tables.comments'));
+    }
+
 
     public function commenter()
     {
@@ -29,51 +66,48 @@ class Comment extends Model
         return $this->belongsTo(Comment::class, 'comment_id');
     }
 
+    public function asPending()
+    {
+        return $this->update(['status' => Status::PENDING]);
+    }
+
+    public function isPending()
+    {
+        return $this->status === Status::PENDING;
+    }
+
     public function approve()
     {
-        return $this->update(['state' => State::APPROVED]);
+        $this->update(['status' => Status::APPROVED]);
+    }
+
+    public function isApproved()
+    {
+        return $this->status === Status::APPROVED;
     }
 
     public function disapprove()
     {
-        return $this->update(['state' => State::DISAPPROVED]);
+        return $this->update(['status' => Status::DISAPPROVED]);
     }
 
-    public function asPending()
+    public function isDisapproved()
     {
-        return $this->update(['state' => State::PENDING]);
+        return $this->status === Status::DISAPPROVED;
     }
 
-    public function scopePending($query, string $commentableType = null): Builder
+    public function scopePending($query): Builder
     {
-        $builder = $query->whereState(State::PENDING);
-
-        if ($commentableType) {
-            $builder->where('commentable_type', $commentableType);
-        }
-
-        return $builder;
+        return $query->whereStatus(Status::PENDING);
     }
 
-    public function scopeApproved($query, string $commentableType = null): Builder
+    public function scopeApproved($query): Builder
     {
-        $builder = $query->whereState(State::APPROVED);
-
-        if ($commentableType) {
-            $builder->where('commentable_type', $commentableType);
-        }
-
-        return $builder;
+        return $query->whereStatus(Status::APPROVED);
     }
 
-    public function scopeDisapproved($query, string $commentableType = null): Builder
+    public function scopeDisapproved($query): Builder
     {
-        $builder = $query->whereState(State::DISAPPROVED);
-
-        if ($commentableType) {
-            $builder->where('commentable_type', $commentableType);
-        }
-
-        return $builder;
+        return $query->whereStatus(Status::DISAPPROVED);
     }
 }

@@ -1,12 +1,12 @@
 # Lara Comments
 
-Lara Comments is a package of Laravel 5.5 or higher that includes comments there are features like Posts, Boxes, etc ...
+Lara Comments is a package of Laravel 6 or higher that includes comments there are features like Posts, Boxes, etc ...
 
 [![Build Status](https://travis-ci.org/rockbuzz/lara-comments.svg?branch=master)](https://travis-ci.org/rockbuzz/lara-comments)
 
 ## Requirements
 
-PHP: >=7.1
+PHP: >=7.3
 
 ## Install
 
@@ -38,18 +38,23 @@ class Post extends Model
 }
 ```
 
-## Methods
+## Usage
 
+#### Post
 ```php
-$comment = new Rockbuzz\LaraComments\Comment;
+$post->comments();
+```
+
+#### Comment
+```php
 //scope
-$comment->approved(string $commentableType = null): Builder
-$comment->pending(string $commentableType = null): Builder
-$comment->disapproved(string $commentableType = null): Builder
-//change state
-$comment->approve()
-$comment->disapprove()
-$comment->asPending()
+$comment->approved();
+$comment->pending();
+$comment->disapproved();
+//change status
+$comment->approve();
+$comment->disapprove();
+$comment->asPending();
 ```
 
 

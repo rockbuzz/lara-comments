@@ -2,166 +2,147 @@
 
 namespace Tests;
 
-use Rockbuzz\LaraComments\State;
-use Tests\Models\Post;
-use Tests\Models\User;
+use Tests\Models\{Post, User};
+use Rockbuzz\LaraComments\Comment;
+use Illuminate\Support\Facades\Config;
+use Rockbuzz\LaraComments\Enums\{Status};
+use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo, BelongsTo};
 
 class CommentTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function mustCreateACommentForAPost()
+    public function testCommentHasCommenter()
     {
-        $user = User::create([
-            'name' => 'User Test',
-            'email' => 'user.test@email.com',
-            'password' => bcrypt('123456')
+        Config::set('comments.models.commenter', User::class);
+
+        $commenter = $this->create(User::class);
+        $comment = $this->create(Comment::class, [
+            'commenter_id' => $commenter->id,
+            'commenter_type' => User::class
         ]);
 
-        $post = Post::create([
-            'title' => 'Title Test',
-            'content' => 'Content Test'
-        ]);
+        $this->assertInstanceOf(BelongsTo::class, $comment->commenter());
+        $this->assertEquals($commenter->id, $comment->commenter->id);
+    }
 
-        $comment = $post->comments()->create([
-            'content' => 'Content Comment Test',
-            'commenter_id' => $user->id
-        ]);
+    public function testCommentHasCommentable()
+    {
+        $post = $this->create(Post::class);
 
-        $this->assertDatabaseHas('comments', [
-            'content' => 'Content Comment Test',
-            'commenter_id' => $user->id,
+        $comment = $this->create(Comment::class, [
             'commentable_id' => $post->id,
             'commentable_type' => Post::class
         ]);
 
-        $this->assertEquals($comment->commentable->id, $post->id);
+        $this->assertInstanceOf(MorphTo::class, $comment->commentable());
+        $this->assertContains($post->id, $comment->commentable->pluck('id'));
     }
 
-    /**
-     * @test
-     */
-    public function mustCreateAReplyToAComment()
+    public function testCommentCanHaveChildren()
     {
-        $user = User::create([
-            'name' => 'User Test',
-            'email' => 'user.test@email.com',
-            'password' => bcrypt('123456')
-        ]);
+        $comment = $this->create(Comment::class);
 
-        $post = Post::create([
-            'title' => 'Title Test',
-            'content' => 'Content Test'
-        ]);
-
-        $comment = $post->comments()->create([
-            'content' => 'Content Comment Test',
-            'commenter_id' => $user->id
-        ]);
-
-        $userReply = User::create([
-            'name' => 'User Reply',
-            'email' => 'user.reply@email.com',
-            'password' => bcrypt('123456')
-        ]);
-
-        $post->comments()->create([
-            'content' => 'Content Reply',
-            'commenter_id' => $userReply->id,
+        $children = $this->create(Comment::class, [
             'comment_id' => $comment->id
         ]);
 
-        $reply = $comment->children()->first();
-
-        $this->assertEquals('Content Reply', $reply->content);
-        $this->assertEquals($reply->parent->content, $comment->content);
+        $this->assertInstanceOf(HasMany::class, $comment->children());
+        $this->assertContains($children->id, $comment->children->pluck('id'));
     }
 
-    /**
-     * @test
-     */
-    public function itShouldUpdateCommentStateToApproved()
+    public function testCommentCanHaveParent()
     {
-        $user = User::create([
-            'name' => 'User Test',
-            'email' => 'user.test@email.com',
-            'password' => bcrypt('123456')
+        $parent = $this->create(Comment::class);
+
+        $comment = $this->create(Comment::class, [
+            'comment_id' => $parent->id
         ]);
 
-        $post = Post::create([
-            'title' => 'Title Test',
-            'content' => 'Content Test'
-        ]);
-
-        $comment = $post->comments()->create([
-            'content' => 'Content Comment Test',
-            'commenter_id' => $user->id,
-            'state' => State::PENDING
-        ]);
-
-        $comment->approve();
-
-        $this->assertDatabaseHas('comments', [
-            'state' => State::APPROVED
-        ]);
+        $this->assertInstanceOf(BelongsTo::class, $comment->parent());
+        $this->assertEquals($parent->id, $comment->parent->id);
     }
 
-    /**
-     * @test
-     */
-    public function itShouldUpdateCommentStateToUnapproved()
+    public function testCommentStatus()
     {
-        $user = User::create([
-            'name' => 'User Test',
-            'email' => 'user.test@email.com',
-            'password' => bcrypt('123456')
-        ]);
-
-        $post = Post::create([
-            'title' => 'Title Test',
-            'content' => 'Content Test'
-        ]);
-
-        $comment = $post->comments()->create([
-            'content' => 'Content Comment Test',
-            'commenter_id' => $user->id,
-            'state' => State::APPROVED
-        ]);
-
-        $comment->disapprove();
-
-        $this->assertDatabaseHas('comments', [
-            'state' => State::DISAPPROVED
-        ]);
-    }
-
-    /**
-     * @test
-     */
-    public function itShouldAsPendingComment()
-    {
-        $user = User::create([
-            'name' => 'User Test',
-            'email' => 'user.test@email.com',
-            'password' => bcrypt('123456')
-        ]);
-
-        $post = Post::create([
-            'title' => 'Title Test',
-            'content' => 'Content Test'
-        ]);
-
-        $comment = $post->comments()->create([
-            'content' => 'Content Comment Test',
-            'commenter_id' => $user->id,
-            'state' => State::APPROVED
+        $comment = $this->create(Comment::class, [
+            'status' => Status::APPROVED
         ]);
 
         $comment->asPending();
 
-        $this->assertDatabaseHas('comments', [
-            'state' => State::PENDING
+        $this->assertTrue($comment->isPending());
+        $this->assertFalse($comment->isApproved());
+        $this->assertFalse($comment->isDisapproved());
+
+        $comment->approve();
+
+        $this->assertFalse($comment->isPending());
+        $this->assertTrue($comment->isApproved());
+        $this->assertFalse($comment->isDisapproved());
+
+        $comment->disapprove();
+
+        $this->assertFalse($comment->isPending());
+        $this->assertFalse($comment->isApproved());
+        $this->assertTrue($comment->isDisapproved());
+    }
+
+    public function testCommentScopePending()
+    {
+        $pendingComments = $this->create(Comment::class, [
+            'status' => Status::PENDING
+        ], 5);
+        $approvedComment = $this->create(Comment::class, [
+            'status' => Status::APPROVED
         ]);
+        $disapprovedComment = $this->create(Comment::class, [
+            'status' => Status::DISAPPROVED
+        ]);
+
+        $pendingComments->each(function ($comment) {
+            $this->assertContains($comment->id, Comment::pending()->get()->pluck('id'));
+        });
+
+        $this->assertNotContains($approvedComment->id, Comment::pending()->get()->pluck('id'));
+        $this->assertNotContains($disapprovedComment->id, Comment::pending()->get()->pluck('id'));
+    }
+
+    public function testCommentScopeApproved()
+    {
+        $pendingComment = $this->create(Comment::class, [
+            'status' => Status::PENDING
+        ]);
+        $approvedComments = $this->create(Comment::class, [
+            'status' => Status::APPROVED
+        ], 5);
+        $disapprovedComment = $this->create(Comment::class, [
+            'status' => Status::DISAPPROVED
+        ]);
+
+        $approvedComments->each(function ($comment) {
+            $this->assertContains($comment->id, Comment::approved()->get()->pluck('id'));
+        });
+
+        $this->assertNotContains($pendingComment->id, Comment::approved()->get()->pluck('id'));
+        $this->assertNotContains($disapprovedComment->id, Comment::approved()->get()->pluck('id'));
+    }
+
+    public function testCommentScopeDisapproved()
+    {
+        $pendingComment = $this->create(Comment::class, [
+            'status' => Status::PENDING
+        ]);
+        $approvedComment = $this->create(Comment::class, [
+            'status' => Status::APPROVED
+        ]);
+        $disapprovedComments = $this->create(Comment::class, [
+            'status' => Status::DISAPPROVED
+        ], 5);
+
+        $disapprovedComments->each(function ($comment) {
+            $this->assertContains($comment->id, Comment::disapproved()->get()->pluck('id'));
+        });
+
+        $this->assertNotContains($pendingComment->id, Comment::disapproved()->get()->pluck('id'));
+        $this->assertNotContains($approvedComment->id, Comment::disapproved()->get()->pluck('id'));
     }
 }

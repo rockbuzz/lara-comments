@@ -2,8 +2,9 @@
 
 namespace Tests;
 
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
+use Tests\Models\User;
 use Rockbuzz\LaraComments\ServiceProvider;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
 {
@@ -22,6 +23,8 @@ class TestCase extends OrchestraTestCase
             '--database' => 'testing',
             '--path' => realpath(__DIR__ . '/migrations'),
         ]);
+
+        $this->withFactories(__DIR__.'/factories');
     }
 
 
@@ -35,4 +38,21 @@ class TestCase extends OrchestraTestCase
     {
         return [ServiceProvider::class];
     }
+
+    protected function signIn($attributes = [], $user = null)
+    {
+        $this->actingAs($user ?: $this->create(User::class, $attributes));
+        return $this;
+    }
+
+    protected function create(string $class, array $attributes = [], int $times = null)
+    {
+        return factory($class, $times)->create($attributes);
+    }
+
+    protected function make(string $class, array $attributes = [], int $times = null)
+    {
+        return factory($class, $times)->make($attributes);
+    }
+
 }
