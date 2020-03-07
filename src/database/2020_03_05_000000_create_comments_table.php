@@ -14,7 +14,9 @@ class CreateCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::create(config('comments.tables.comments'), function (Blueprint $table) {
+        $columns = config('comments.tables.morph_columns');
+
+        Schema::create(config('comments.tables.comments'), function (Blueprint $table) use ($columns) {
             $table->uuid('id')->primary();
             $table->string('title');
             $table->text('body');
@@ -26,18 +28,18 @@ class CreateCommentsTable extends Migration
                 ->references('id')
                 ->on(config('comments.tables.comments'))
                 ->onDelete('cascade');
-            $table->uuid('commentable_id')->index();
-            $table->string('commentable_type');
-            $table->uuid('commenter_id')->index();
-            $table->string('commenter_type');
+            $table->uuid($columns['commentable_id'])->index();
+            $table->string($columns['commentable_type']);
+            $table->uuid($columns['commenter_id'])->index();
+            $table->string($columns['commenter_type']);
             $table->timestamps();
             $table->softDeletes();
             $table->index([
                 'status',
-                'commentable_id',
-                'commentable_type',
-                'commenter_id',
-                'commenter_type'
+                $columns['commentable_id'],
+                $columns['commentable_type'],
+                $columns['commenter_id'],
+                $columns['commenter_type']
             ], 'status_commentable_commenter');
         });
     }

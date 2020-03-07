@@ -2,7 +2,17 @@
 
 return [
     'tables' => [
-        'comments' => 'comments'
+        'comments' => 'comments',
+        'morph_names' => [
+            'commentable' => 'commentable',
+            'commenter' => 'commenter'
+        ],
+        'morph_columns' => [
+            'commentable_id' => 'commentable_id',
+            'commentable_type' => 'commentable_type',
+            'commenter_id' => 'commenter_id',
+            'commenter_type' => 'commenter_type',
+        ]
     ],
     'models' => [
         'comment' => \Rockbuzz\LaraComments\Comment::class,

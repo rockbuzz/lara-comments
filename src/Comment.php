@@ -5,12 +5,11 @@ namespace Rockbuzz\LaraComments;
 use Rockbuzz\LaraUuid\Traits\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Rockbuzz\LaraComments\Enums\Status;
-use Illuminate\Database\Eloquent\Builder;
-use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, DisapprovedEvent};
+use Illuminate\Database\Eloquent\{Builder, SoftDeletes};
 
 class Comment extends Model
 {
-    use Uuid;
+    use Uuid, SoftDeletes;
 
     public $incrementing = false;
 
@@ -30,7 +29,10 @@ class Comment extends Model
     ];
 
     protected $casts = [
-        'id' => 'string'
+        'id' => 'string',
+        'likes' => 'integer',
+        'type' => 'integer',
+        'status' => 'integer'
     ];
 
     protected $dates = [
@@ -49,12 +51,12 @@ class Comment extends Model
 
     public function commenter()
     {
-        return $this->belongsTo(config('comments.models.commenter'));
+        return $this->morphTo(config('comments.tables.morph_names.commenter'));
     }
 
     public function commentable()
     {
-        return $this->morphTo('commentable');
+        return $this->morphTo(config('comments.tables.morph_names.commentable'));
     }
 
     public function children()
@@ -67,38 +69,17 @@ class Comment extends Model
         return $this->belongsTo(Comment::class, 'comment_id');
     }
 
-    public function asPending()
-    {
-        $this->update(['status' => Status::PENDING]);
-
-        event(new AsPendingEvent($this));
-    }
-
-    public function isPending()
+    public function isPending(): bool
     {
         return $this->status === Status::PENDING;
     }
 
-    public function approve()
-    {
-        $this->update(['status' => Status::APPROVED]);
-
-        event(new ApprovedEvent($this));
-    }
-
-    public function isApproved()
+    public function isApproved(): bool
     {
         return $this->status === Status::APPROVED;
     }
 
-    public function disapprove()
-    {
-        $this->update(['status' => Status::DISAPPROVED]);
-
-        event(new DisapprovedEvent($this));
-    }
-
-    public function isDisapproved()
+    public function isDisapproved(): bool
     {
         return $this->status === Status::DISAPPROVED;
     }

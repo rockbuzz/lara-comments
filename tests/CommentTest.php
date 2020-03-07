@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Event;
 use Tests\Models\{Post, User};
 use Rockbuzz\LaraComments\Comment;
@@ -9,11 +10,82 @@ use Illuminate\Support\Facades\Config;
 use Rockbuzz\LaraComments\Events\ApprovedEvent;
 use Rockbuzz\LaraComments\Events\AsPendingEvent;
 use Rockbuzz\LaraComments\Events\DisapprovedEvent;
+use Rockbuzz\LaraUuid\Traits\Uuid;
 use Rockbuzz\LaraComments\Enums\{Status};
 use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo, BelongsTo};
 
 class CommentTest extends TestCase
 {
+    protected $comment;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->comment = new Comment();
+    }
+
+    public function testIfUsesTraits()
+    {
+        $expected = [
+            Uuid::class,
+            SoftDeletes::class
+        ];
+
+        $this->assertEquals(
+            $expected,
+            array_values(class_uses(Comment::class))
+        );
+    }
+
+    public function testIncrementing()
+    {
+        $this->assertFalse($this->comment->incrementing);
+    }
+
+    public function testKeyType()
+    {
+        $this->assertEquals('string', $this->comment->getKeyType());
+    }
+
+    public function testFillable()
+    {
+        $expected = [
+            'title',
+            'body',
+            'likes',
+            'type',
+            'status',
+            'comment_id',
+            'commentable_id',
+            'commentable_type',
+            'commenter_id',
+            'commenter_type'
+        ];
+
+        $this->assertEquals($expected, $this->comment->getFillable());
+    }
+
+    public function testCasts()
+    {
+        $expected = [
+            'id' => 'string',
+            'likes' => 'integer',
+            'type' => 'integer',
+            'status' => 'integer'
+        ];
+
+        $this->assertEquals($expected, $this->comment->getCasts());
+    }
+
+    public function testDates()
+    {
+        $this->assertEquals(
+            array_values(['deleted_at', 'created_at', 'updated_at']),
+            array_values($this->comment->getDates())
+        );
+    }
+
     public function testCommentHasCommenter()
     {
         Config::set('comments.models.commenter', User::class);
@@ -24,7 +96,7 @@ class CommentTest extends TestCase
             'commenter_type' => User::class
         ]);
 
-        $this->assertInstanceOf(BelongsTo::class, $comment->commenter());
+        $this->assertInstanceOf(MorphTo::class, $comment->commenter());
         $this->assertEquals($commenter->id, $comment->commenter->id);
     }
 
@@ -65,42 +137,42 @@ class CommentTest extends TestCase
         $this->assertEquals($parent->id, $comment->parent->id);
     }
 
-    public function testCommentStatus()
+    public function testCommentIsPending()
     {
-        Event::fake([AsPendingEvent::class, ApprovedEvent::class, DisapprovedEvent::class]);
-
         $comment = $this->create(Comment::class, [
             'status' => Status::APPROVED
         ]);
 
-        $comment->asPending();
+        $this->assertFalse($comment->isPending());
 
-        Event::assertDispatched(AsPendingEvent::class, function ($e) use ($comment) {
-            return $e->comment->id === $comment->id;
-        });
+        $comment->update(['status' => Status::PENDING]);
 
         $this->assertTrue($comment->isPending());
+    }
+
+    public function testCommentIsApproved()
+    {
+        $comment = $this->create(Comment::class, [
+            'status' => Status::PENDING
+        ]);
+
         $this->assertFalse($comment->isApproved());
-        $this->assertFalse($comment->isDisapproved());
 
-        $comment->approve();
+        $comment->update(['status' => Status::APPROVED]);
 
-        Event::assertDispatched(ApprovedEvent::class, function ($e) use ($comment) {
-            return $e->comment->id === $comment->id;
-        });
-
-        $this->assertFalse($comment->isPending());
         $this->assertTrue($comment->isApproved());
+    }
+
+    public function testCommentIsDisapproved()
+    {
+        $comment = $this->create(Comment::class, [
+            'status' => Status::PENDING
+        ]);
+
         $this->assertFalse($comment->isDisapproved());
 
-        $comment->disapprove();
+        $comment->update(['status' => Status::DISAPPROVED]);
 
-        Event::assertDispatched(DisapprovedEvent::class, function ($e) use ($comment) {
-            return $e->comment->id === $comment->id;
-        });
-
-        $this->assertFalse($comment->isPending());
-        $this->assertFalse($comment->isApproved());
         $this->assertTrue($comment->isDisapproved());
     }
 

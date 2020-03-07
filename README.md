@@ -30,11 +30,18 @@ php artisan migrate
 Add the `Commentable` trait to the model for which you want to enable comments for:
 
 ```php
-use Rockbuzz\LaraComments\TestHelper;
+use Rockbuzz\LaraComments\Traits\HasComments;
+
+class User extends Model
+{
+    use HasComments;
+}
+
+use Rockbuzz\LaraComments\Traits\Commentable;
 
 class Post extends Model
 {
-    use TestHelper;
+    use Commentable;
 }
 ```
 
@@ -42,19 +49,23 @@ class Post extends Model
 
 #### Post
 ```php
-$post->comments();
+$post->comments; //Collection;
+$post->comments(); //Builder;
+$post->asPending($comment); //void;
+$post->approve($comment); //void;
+$post->disapprove($comment); //void;
 ```
 
 #### Comment
 ```php
+//status
+$comment->isPending(); //bool;
+$comment->isApprove(); //bool;
+$comment->isDisapprove(); //bool;
 //scope
-$comment->approved();
-$comment->pending();
-$comment->disapproved();
-//change status
-$comment->approve();
-$comment->disapprove();
-$comment->asPending();
+$comment->approved(); //Builder;
+$comment->pending(); //Builder;
+$comment->disapproved(); //Builder;
 ```
 
 #### Events
