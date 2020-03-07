@@ -110,7 +110,7 @@ class CommentTest extends TestCase
         ]);
 
         $this->assertInstanceOf(MorphTo::class, $comment->commentable());
-        $this->assertContains($post->id, $comment->commentable->pluck('id'));
+        $this->assertEquals($post->id, $comment->commentable->id);
     }
 
     public function testCommentCanHaveChildren()
