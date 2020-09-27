@@ -55,5 +55,4 @@ class TestCase extends OrchestraTestCase
     {
         return factory($class, $times)->make($attributes);
     }
-
 }
