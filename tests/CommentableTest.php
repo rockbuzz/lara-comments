@@ -11,7 +11,7 @@ use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, UnapprovedEvent
 
 class CommentableTest extends TestCase
 {
-    public function testPostHasComments()
+    public function testPostCanHaveComments()
     {
         $post = $this->create(Post::class);
         $comment = $this->create(Comment::class, [
@@ -21,6 +21,20 @@ class CommentableTest extends TestCase
 
         $this->assertInstanceOf(MorphMany::class, $post->comments());
         $this->assertContains($comment->id, $post->comments->pluck('id'));
+    }
+
+    public function testPostHasComments()
+    {
+        $post = $this->create(Post::class);
+
+        $this->assertFalse($post->hasComments());
+
+        $this->create(Comment::class, [
+            'commentable_id' => $post->id,
+            'commentable_type' => Post::class
+        ]);
+
+        $this->assertTrue($post->hasComments());
     }
 
     public function testPostCanHaveCommentPending()

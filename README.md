@@ -25,16 +25,15 @@ php artisan vendor:publish --provider="Rockbuzz\LaraComments\ServiceProvider"
 ```bash
 php artisan migrate
 ```
-## Add Commentable trait to models
 
-Add the `Commentable` trait to the model for which you want to enable comments for:
+Add the `HaveComments and Commentable` trait in models for:
 
 ```php
-use Rockbuzz\LaraComments\Traits\HasComments;
+use Rockbuzz\LaraComments\Traits\HaveComments;
 
 class User extends Model
 {
-    use HasComments;
+    use HaveComments;
 }
 
 use Rockbuzz\LaraComments\Traits\Commentable;
@@ -47,32 +46,40 @@ class Post extends Model
 
 ## Usage
 
-#### Post
+#### User
 ```php
 $post->comments; //Collection;
-$post->comments(); //Builder;
+$post->hasComments(); //bool;
+```
+
+#### Post
+```php
+$post->commenter: //User
+$post->commentable; //Collection;
 $post->asPending($comment); //void;
 $post->approve($comment); //void;
-$post->disapprove($comment); //void;
+$post->unapprove($comment); //void;
 ```
 
 #### Comment
 ```php
-//status
 $comment->isPending(); //bool;
 $comment->isApprove(); //bool;
-$comment->isDisapprove(); //bool;
-//scope
-$comment->approved(); //Builder;
-$comment->pending(); //Builder;
-$comment->disapproved(); //Builder;
+$comment->isUnapprove(); //bool;
+```
+
+Scope
+```php
+Comment::approved(); //Builder;
+Comment::pending(); //Builder;
+Comment::unapproved(); //Builder;
 ```
 
 #### Events
 ```php
 \Rockbuzz\LaraComments\Events\AsPendingEvent::class;
 \Rockbuzz\LaraComments\Events\ApprovedEvent::class;
-\Rockbuzz\LaraComments\Events\DisapprovedEvent::class;
+\Rockbuzz\LaraComments\Events\UnapprovedEvent::class;
 ```
 
 

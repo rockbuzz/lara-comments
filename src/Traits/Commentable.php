@@ -17,6 +17,11 @@ trait Commentable
         )->whereNull('parent_id');
     }
 
+    public function hasComments()
+    {
+        return $this->comments()->exists();
+    }
+
     /**
      * @var Comment|string $comment instance or uuid
      */
