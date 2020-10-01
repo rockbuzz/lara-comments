@@ -3,11 +3,11 @@
 namespace Tests\Stubs;
 
 use Illuminate\Database\Eloquent\Model;
-use Rockbuzz\LaraComments\Traits\HasComments;
+use Rockbuzz\LaraComments\Traits\HaveComments;
 
 class Commenter extends Model
 {
-    use HasComments;
+    use HaveComments;
 
     protected $guarded = [];
 }

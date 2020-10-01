@@ -4,7 +4,7 @@ namespace Rockbuzz\LaraComments\Traits;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
-trait HasComments
+trait HaveComments
 {
     public function comments(): MorphMany
     {
