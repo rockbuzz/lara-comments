@@ -34,13 +34,6 @@ class CreateCommentsTable extends Migration
             $table->string($columns['commenter_type']);
             $table->timestamps();
             $table->softDeletes();
-            $table->index([
-                'status',
-                $columns['commentable_id'],
-                $columns['commentable_type'],
-                $columns['commenter_id'],
-                $columns['commenter_type']
-            ], 'status_commentable_commenter');
         });
     }
 
