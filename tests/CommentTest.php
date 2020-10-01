@@ -159,17 +159,17 @@ class CommentTest extends TestCase
         $this->assertTrue($comment->isApproved());
     }
 
-    public function testCommentIsDisapproved()
+    public function testCommentIsUnapproved()
     {
         $comment = $this->create(Comment::class, [
             'status' => Status::PENDING
         ]);
 
-        $this->assertFalse($comment->isDisapproved());
+        $this->assertFalse($comment->isUnapproved());
 
-        $comment->update(['status' => Status::DISAPPROVED]);
+        $comment->update(['status' => Status::UNAPPROVED]);
 
-        $this->assertTrue($comment->isDisapproved());
+        $this->assertTrue($comment->isUnapproved());
     }
 
     public function testCommentScopePending()
@@ -181,7 +181,7 @@ class CommentTest extends TestCase
             'status' => Status::APPROVED
         ]);
         $disapprovedComment = $this->create(Comment::class, [
-            'status' => Status::DISAPPROVED
+            'status' => Status::UNAPPROVED
         ]);
 
         $pendingComments->each(function ($comment) {
@@ -201,7 +201,7 @@ class CommentTest extends TestCase
             'status' => Status::APPROVED
         ], 5);
         $disapprovedComment = $this->create(Comment::class, [
-            'status' => Status::DISAPPROVED
+            'status' => Status::UNAPPROVED
         ]);
 
         $approvedComments->each(function ($comment) {
@@ -221,7 +221,7 @@ class CommentTest extends TestCase
             'status' => Status::APPROVED
         ]);
         $disapprovedComments = $this->create(Comment::class, [
-            'status' => Status::DISAPPROVED
+            'status' => Status::UNAPPROVED
         ], 5);
 
         $disapprovedComments->each(function ($comment) {

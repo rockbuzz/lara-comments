@@ -8,5 +8,5 @@ class Status extends Enum
 {
     const PENDING = 1;
     const APPROVED = 5;
-    const DISAPPROVED = 9;
+    const UNAPPROVED = 9;
 }

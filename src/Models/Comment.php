@@ -71,9 +71,9 @@ class Comment extends Model
         return $this->status === Status::APPROVED;
     }
 
-    public function isDisapproved(): bool
+    public function isUnapproved(): bool
     {
-        return $this->status === Status::DISAPPROVED;
+        return $this->status === Status::UNAPPROVED;
     }
 
     public function scopePending($query): Builder
@@ -88,6 +88,6 @@ class Comment extends Model
 
     public function scopeDisapproved($query): Builder
     {
-        return $query->whereStatus(Status::DISAPPROVED);
+        return $query->whereStatus(Status::UNAPPROVED);
     }
 }

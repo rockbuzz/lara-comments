@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Rockbuzz\LaraComments\Enums\Status;
 use Rockbuzz\LaraComments\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, DisapprovedEvent};
+use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, UnapprovedEvent};
 
 class CommentableTest extends TestCase
 {
@@ -91,7 +91,7 @@ class CommentableTest extends TestCase
 
     public function testPostCanHaveCommentDisapproved()
     {
-        Event::fake([DisapprovedEvent::class]);
+        Event::fake([UnapprovedEvent::class]);
 
         $post = $this->create(Post::class);
 
@@ -101,23 +101,23 @@ class CommentableTest extends TestCase
             'commentable_type' => Post::class
         ]);
 
-        $post->disapprove($comment);
+        $post->unapprove($comment);
 
         $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
-            'status' => Status::DISAPPROVED
+            'status' => Status::UNAPPROVED
         ]);
 
         $comment->update(['status' => Status::PENDING]);
 
-        $post->disapprove($comment->id);
+        $post->unapprove($comment->id);
 
         $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
-            'status' => Status::DISAPPROVED
+            'status' => Status::UNAPPROVED
         ]);
 
-        Event::assertDispatched(DisapprovedEvent::class, function ($e) use ($comment) {
+        Event::assertDispatched(UnapprovedEvent::class, function ($e) use ($comment) {
             return $e->comment->id === $comment->id;
         });
     }

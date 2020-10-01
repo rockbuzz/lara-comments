@@ -5,7 +5,7 @@ namespace Rockbuzz\LaraComments\Traits;
 use Rockbuzz\LaraComments\Enums\Status;
 use Rockbuzz\LaraComments\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, DisapprovedEvent};
+use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, UnapprovedEvent};
 
 trait Commentable
 {
@@ -17,38 +17,47 @@ trait Commentable
         )->whereNull('parent_id');
     }
 
+    /**
+     * @var Comment|string $comment instance or uuid
+     */
     public function asPending($comment): void
     {
-        $comment = $this->getComment($comment);
+        $comment = $this->commentResolve($comment);
 
         $comment->update(['status' => Status::PENDING]);
 
         event(new AsPendingEvent($comment));
     }
 
+    /**
+     * @var Comment|string $comment instance or uuid
+     */
     public function approve($comment): void
     {
-        $comment = $this->getComment($comment);
+        $comment = $this->commentResolve($comment);
 
         $comment->update(['status' => Status::APPROVED]);
 
         event(new ApprovedEvent($comment));
     }
 
-    public function disapprove($comment): void
+    /**
+     * @var Comment|string $comment instance or uuid
+     */
+    public function unapprove($comment): void
     {
-        $comment = $this->getComment($comment);
+        $comment = $this->commentResolve($comment);
 
-        $comment->update(['status' => Status::DISAPPROVED]);
+        $comment->update(['status' => Status::UNAPPROVED]);
 
-        event(new DisapprovedEvent($comment));
+        event(new UnapprovedEvent($comment));
     }
 
     /**
      * @param $comment
      * @return Comment
      */
-    private function getComment($comment): Comment
+    private function commentResolve($comment): Comment
     {
         $comment = is_a($comment, Comment::class) ? $comment : Comment::find($comment);
         return $comment;

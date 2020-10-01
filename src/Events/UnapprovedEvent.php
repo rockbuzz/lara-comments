@@ -8,7 +8,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\{Channel, InteractsWithSockets, PresenceChannel, PrivateChannel};
 
-class DisapprovedEvent
+class UnapprovedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
