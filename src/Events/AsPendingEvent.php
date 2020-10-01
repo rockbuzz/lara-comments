@@ -2,8 +2,8 @@
 
 namespace Rockbuzz\LaraComments\Events;
 
-use Rockbuzz\LaraComments\Comment;
 use Illuminate\Queue\SerializesModels;
+use Rockbuzz\LaraComments\Models\Comment;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\{Channel, InteractsWithSockets, PresenceChannel, PrivateChannel};

@@ -2,12 +2,12 @@
 
 namespace Tests;
 
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Tests\Stubs\{Post, Commenter};
-use Rockbuzz\LaraComments\Comment;
-use Illuminate\Support\Facades\Config;
 use Rockbuzz\LaraUuid\Traits\Uuid;
+use Tests\Stubs\{Post, Commenter};
+use Illuminate\Support\Facades\Config;
+use Rockbuzz\LaraComments\Models\Comment;
 use Rockbuzz\LaraComments\Enums\{Status};
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo, BelongsTo};
 
 class CommentTest extends TestCase

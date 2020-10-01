@@ -2,8 +2,8 @@
 
 namespace Rockbuzz\LaraComments\Traits;
 
-use Rockbuzz\LaraComments\Comment;
 use Rockbuzz\LaraComments\Enums\Status;
+use Rockbuzz\LaraComments\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Rockbuzz\LaraComments\Events\{ApprovedEvent, AsPendingEvent, DisapprovedEvent};
 

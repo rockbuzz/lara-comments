@@ -3,7 +3,7 @@
 namespace Tests;
 
 use Tests\Stubs\Commenter;
-use Rockbuzz\LaraComments\Comment;
+use Rockbuzz\LaraComments\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class HaveCommentsTest extends TestCase

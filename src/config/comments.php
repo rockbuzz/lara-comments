@@ -14,7 +14,7 @@ return [
         ]
     ],
     'models' => [
-        'comment' => \Rockbuzz\LaraComments\Comment::class,
+        'comment' => \Rockbuzz\LaraComments\Models\Comment::class,
         'commenter' => App\User::class
     ]
 ];

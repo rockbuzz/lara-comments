@@ -4,7 +4,7 @@
 
 use Faker\Generator as Faker;
 use Tests\Stubs\{Post, Commenter};
-use Rockbuzz\LaraComments\Comment;
+use Rockbuzz\LaraComments\Models\Comment;
 use Rockbuzz\LaraComments\Enums\{Type, Status};
 
 $factory->define(Comment::class, function (Faker $faker) {
