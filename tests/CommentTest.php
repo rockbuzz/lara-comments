@@ -135,9 +135,7 @@ class CommentTest extends TestCase
 
     public function testCommentIsPending()
     {
-        $comment = $this->create(Comment::class, [
-            'status' => Status::APPROVED
-        ]);
+        $comment = factory(Comment::class)->states(Status::APPROVED)->create();
 
         $this->assertFalse($comment->isPending());
 
@@ -148,9 +146,7 @@ class CommentTest extends TestCase
 
     public function testCommentIsApproved()
     {
-        $comment = $this->create(Comment::class, [
-            'status' => Status::PENDING
-        ]);
+        $comment = factory(Comment::class)->states(Status::PENDING)->create();
 
         $this->assertFalse($comment->isApproved());
 
@@ -161,9 +157,7 @@ class CommentTest extends TestCase
 
     public function testCommentIsUnapproved()
     {
-        $comment = $this->create(Comment::class, [
-            'status' => Status::PENDING
-        ]);
+        $comment = factory(Comment::class)->states(Status::PENDING)->create();
 
         $this->assertFalse($comment->isUnapproved());
 
@@ -174,15 +168,9 @@ class CommentTest extends TestCase
 
     public function testCommentScopePending()
     {
-        $pendingComments = $this->create(Comment::class, [
-            'status' => Status::PENDING
-        ], 5);
-        $approvedComment = $this->create(Comment::class, [
-            'status' => Status::APPROVED
-        ]);
-        $disapprovedComment = $this->create(Comment::class, [
-            'status' => Status::UNAPPROVED
-        ]);
+        $pendingComments = factory(Comment::class, 5)->states(Status::PENDING)->create();
+        $approvedComment = factory(Comment::class)->states(Status::APPROVED)->create();
+        $disapprovedComment = factory(Comment::class)->states(Status::UNAPPROVED)->create();
 
         $pendingComments->each(function ($comment) {
             $this->assertContains($comment->id, Comment::pending()->get()->pluck('id'));
@@ -194,15 +182,9 @@ class CommentTest extends TestCase
 
     public function testCommentScopeApproved()
     {
-        $pendingComment = $this->create(Comment::class, [
-            'status' => Status::PENDING
-        ]);
-        $approvedComments = $this->create(Comment::class, [
-            'status' => Status::APPROVED
-        ], 5);
-        $disapprovedComment = $this->create(Comment::class, [
-            'status' => Status::UNAPPROVED
-        ]);
+        $pendingComment = factory(Comment::class)->states(Status::PENDING)->create();
+        $approvedComments = factory(Comment::class, 5)->states(Status::APPROVED)->create();
+        $disapprovedComment = factory(Comment::class)->states(Status::UNAPPROVED)->create();
 
         $approvedComments->each(function ($comment) {
             $this->assertContains($comment->id, Comment::approved()->get()->pluck('id'));
@@ -214,15 +196,9 @@ class CommentTest extends TestCase
 
     public function testCommentScopeDisapproved()
     {
-        $pendingComment = $this->create(Comment::class, [
-            'status' => Status::PENDING
-        ]);
-        $approvedComment = $this->create(Comment::class, [
-            'status' => Status::APPROVED
-        ]);
-        $disapprovedComments = $this->create(Comment::class, [
-            'status' => Status::UNAPPROVED
-        ], 5);
+        $pendingComment = factory(Comment::class)->states(Status::PENDING)->create();
+        $approvedComment = factory(Comment::class)->states(Status::APPROVED)->create();
+        $disapprovedComments = factory(Comment::class, 5)->states(Status::UNAPPROVED)->create();
 
         $disapprovedComments->each(function ($comment) {
             $this->assertContains($comment->id, Comment::disapproved()->get()->pluck('id'));

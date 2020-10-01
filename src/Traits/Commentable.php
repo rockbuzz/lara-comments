@@ -59,7 +59,6 @@ trait Commentable
      */
     private function commentResolve($comment): Comment
     {
-        $comment = is_a($comment, Comment::class) ? $comment : Comment::find($comment);
-        return $comment;
+        return is_a($comment, Comment::class) ? $comment : Comment::findOrFail($comment);
     }
 }

@@ -21,3 +21,7 @@ $factory->define(Comment::class, function (Faker $faker) {
         'commenter_type' => Commenter::class
     ];
 });
+
+$factory->state(Comment::class, Status::PENDING, ['status' => Status::PENDING]);
+$factory->state(Comment::class, Status::APPROVED, ['status' => Status::APPROVED]);
+$factory->state(Comment::class, Status::UNAPPROVED, ['status' => Status::UNAPPROVED]);
