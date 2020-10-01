@@ -13,4 +13,9 @@ trait HaveComments
             config('comments.tables.morph_names.commenter')
         );
     }
+
+    public function hasComments()
+    {
+        return $this->comments()->exists();
+    }
 }
