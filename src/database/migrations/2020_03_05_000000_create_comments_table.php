@@ -16,7 +16,7 @@ class CreateCommentsTable extends Migration
     {
         $columns = config('comments.tables.morph_columns');
 
-        Schema::create(config('comments.tables.comments'), function (Blueprint $table) use ($columns) {
+        Schema::create('comments', function (Blueprint $table) use ($columns) {
             $table->uuid('id')->primary();
             $table->string('title');
             $table->text('body');
@@ -26,7 +26,7 @@ class CreateCommentsTable extends Migration
             $table->uuid('comment_id')->nullable();
             $table->foreign('comment_id')
                 ->references('id')
-                ->on(config('comments.tables.comments'))
+                ->on('comments')
                 ->onDelete('cascade');
             $table->uuid($columns['commentable_id'])->index();
             $table->string($columns['commentable_type']);
@@ -51,6 +51,6 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(config('comments.tables.comments'));
+        Schema::dropIfExists('comments');
     }
 }

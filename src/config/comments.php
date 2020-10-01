@@ -2,7 +2,6 @@
 
 return [
     'tables' => [
-        'comments' => 'comments',
         'morph_names' => [
             'commentable' => 'commentable',
             'commenter' => 'commenter'

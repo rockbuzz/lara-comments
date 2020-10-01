@@ -41,14 +41,6 @@ class Comment extends Model
         'updated_at'
     ];
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-
-        $this->setTable(config('comments.tables.comments'));
-    }
-
-
     public function commenter()
     {
         return $this->morphTo(config('comments.tables.morph_names.commenter'));

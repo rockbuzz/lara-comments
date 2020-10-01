@@ -37,7 +37,7 @@ class CommentableTest extends TestCase
 
         $post->asPending($comment);
 
-        $this->assertDatabaseHas(config('comments.tables.comments'), [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
             'status' => Status::PENDING
         ]);
@@ -46,7 +46,7 @@ class CommentableTest extends TestCase
 
         $post->asPending($comment->id);
 
-        $this->assertDatabaseHas(config('comments.tables.comments'), [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
             'status' => Status::PENDING
         ]);
@@ -70,7 +70,7 @@ class CommentableTest extends TestCase
 
         $post->approve($comment);
 
-        $this->assertDatabaseHas(config('comments.tables.comments'), [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
             'status' => Status::APPROVED
         ]);
@@ -79,7 +79,7 @@ class CommentableTest extends TestCase
 
         $post->approve($comment->id);
 
-        $this->assertDatabaseHas(config('comments.tables.comments'), [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
             'status' => Status::APPROVED
         ]);
@@ -103,7 +103,7 @@ class CommentableTest extends TestCase
 
         $post->disapprove($comment);
 
-        $this->assertDatabaseHas(config('comments.tables.comments'), [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
             'status' => Status::DISAPPROVED
         ]);
@@ -112,7 +112,7 @@ class CommentableTest extends TestCase
 
         $post->disapprove($comment->id);
 
-        $this->assertDatabaseHas(config('comments.tables.comments'), [
+        $this->assertDatabaseHas('comments', [
             'id' => $comment->id,
             'status' => Status::DISAPPROVED
         ]);

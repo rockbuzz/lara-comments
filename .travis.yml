@@ -1,16 +1,17 @@
 language: php
 
 php:
+  - 7.2
   - 7.3
-  - 7.4
 
 matrix:
   allow_failures:
-    - php: 7.4
+    - php: 7.3
 
 install:
   - composer selfupdate
   - composer install
 
 script:
-  - ./vendor/bin/phpunit --testdox
+  - ./vendor/bin/phpcs
+  - ./vendor/bin/phpunit
