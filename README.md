@@ -14,10 +14,6 @@ PHP >=7.2
 $ composer require rockbuzz/lara-comments
 ```
 
-## Run migrations
-
-We need to create the table for comments.
-
 ```bash
 php artisan vendor:publish --provider="Rockbuzz\LaraComments\ServiceProvider"
 ```
