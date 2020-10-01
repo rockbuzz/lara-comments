@@ -52,7 +52,7 @@ class CommentTest extends TestCase
             'likes',
             'type',
             'status',
-            'comment_id',
+            'parent_id',
             'commentable_id',
             'commentable_type',
             'commenter_id',
@@ -114,7 +114,7 @@ class CommentTest extends TestCase
         $comment = $this->create(Comment::class);
 
         $children = $this->create(Comment::class, [
-            'comment_id' => $comment->id
+            'parent_id' => $comment->id
         ]);
 
         $this->assertInstanceOf(HasMany::class, $comment->children());
@@ -126,7 +126,7 @@ class CommentTest extends TestCase
         $parent = $this->create(Comment::class);
 
         $comment = $this->create(Comment::class, [
-            'comment_id' => $parent->id
+            'parent_id' => $parent->id
         ]);
 
         $this->assertInstanceOf(BelongsTo::class, $comment->parent());

@@ -23,8 +23,8 @@ class CreateCommentsTable extends Migration
             $table->integer('likes')->default(0);
             $table->smallInteger('type')->default(Type::DEFAULT);
             $table->smallInteger('status')->default(Status::PENDING);
-            $table->uuid('comment_id')->nullable();
-            $table->foreign('comment_id')
+            $table->uuid('parent_id')->nullable();
+            $table->foreign('parent_id')
                 ->references('id')
                 ->on('comments')
                 ->onDelete('cascade');

@@ -14,7 +14,7 @@ trait Commentable
         return $this->morphMany(
             config('comments.models.comment'),
             config('comments.tables.morph_names.commentable')
-        )->whereNull('comment_id');
+        )->whereNull('parent_id');
     }
 
     public function asPending($comment): void

@@ -21,7 +21,7 @@ class Comment extends Model
         'likes',
         'type',
         'status',
-        'comment_id',
+        'parent_id',
         'commentable_id',
         'commentable_type',
         'commenter_id',
@@ -53,12 +53,12 @@ class Comment extends Model
 
     public function children()
     {
-        return $this->hasMany(Comment::class, 'comment_id');
+        return $this->hasMany(Comment::class, 'parent_id');
     }
 
     public function parent()
     {
-        return $this->belongsTo(Comment::class, 'comment_id');
+        return $this->belongsTo(Comment::class, 'parent_id');
     }
 
     public function isPending(): bool

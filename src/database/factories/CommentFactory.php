@@ -14,7 +14,7 @@ $factory->define(Comment::class, function (Faker $faker) {
         'likes' => $faker->numberBetween(0, 10),
         'type' => Type::getRandomValue(),
         'status' => Status::getRandomValue(),
-        'comment_id' => null,
+        'parent_id' => null,
         'commentable_id' => factory(Post::class)->create()->id,
         'commentable_type' => Post::class,
         'commenter_id' => factory(Commenter::class)->create()->id,
