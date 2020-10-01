@@ -3,7 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use Faker\Generator as Faker;
-use Tests\Models\{Post, User};
+use Tests\Stubs\{Post, Commenter};
 use Rockbuzz\LaraComments\Comment;
 use Rockbuzz\LaraComments\Enums\{Type, Status};
 
@@ -17,7 +17,7 @@ $factory->define(Comment::class, function (Faker $faker) {
         'comment_id' => null,
         'commentable_id' => factory(Post::class)->create()->id,
         'commentable_type' => Post::class,
-        'commenter_id' => factory(User::class)->create()->id,
-        'commenter_type' => User::class
+        'commenter_id' => factory(Commenter::class)->create()->id,
+        'commenter_type' => Commenter::class
     ];
 });

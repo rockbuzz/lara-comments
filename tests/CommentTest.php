@@ -3,13 +3,9 @@
 namespace Tests;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Event;
-use Tests\Models\{Post, User};
+use Tests\Stubs\{Post, Commenter};
 use Rockbuzz\LaraComments\Comment;
 use Illuminate\Support\Facades\Config;
-use Rockbuzz\LaraComments\Events\ApprovedEvent;
-use Rockbuzz\LaraComments\Events\AsPendingEvent;
-use Rockbuzz\LaraComments\Events\DisapprovedEvent;
 use Rockbuzz\LaraUuid\Traits\Uuid;
 use Rockbuzz\LaraComments\Enums\{Status};
 use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo, BelongsTo};
@@ -88,12 +84,12 @@ class CommentTest extends TestCase
 
     public function testCommentHasCommenter()
     {
-        Config::set('comments.models.commenter', User::class);
+        Config::set('comments.models.commenter', Commenter::class);
 
-        $commenter = $this->create(User::class);
+        $commenter = $this->create(Commenter::class);
         $comment = $this->create(Comment::class, [
             'commenter_id' => $commenter->id,
-            'commenter_type' => User::class
+            'commenter_type' => Commenter::class
         ]);
 
         $this->assertInstanceOf(MorphTo::class, $comment->commenter());
