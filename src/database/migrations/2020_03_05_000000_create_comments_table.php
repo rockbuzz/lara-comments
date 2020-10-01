@@ -24,13 +24,9 @@ class CreateCommentsTable extends Migration
             $table->smallInteger('type')->default(Type::DEFAULT);
             $table->smallInteger('status')->default(Status::PENDING);
             $table->uuid('parent_id')->nullable();
-            $table->foreign('parent_id')
-                ->references('id')
-                ->on('comments')
-                ->onDelete('cascade');
-            $table->uuid($columns['commentable_id'])->index();
+            $table->uuid($columns['commentable_id']);
             $table->string($columns['commentable_type']);
-            $table->uuid($columns['commenter_id'])->index();
+            $table->uuid($columns['commenter_id']);
             $table->string($columns['commenter_type']);
             $table->timestamps();
             $table->softDeletes();
