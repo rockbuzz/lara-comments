@@ -22,17 +22,15 @@ php artisan vendor:publish --provider="Rockbuzz\LaraComments\ServiceProvider"
 php artisan migrate
 ```
 
-Add the `HaveComments and Commentable` trait in models for:
+Add the `Commenter and Commentable` trait in models for:
 
 ```php
-use Rockbuzz\LaraComments\Traits\HaveComments;
+use Rockbuzz\LaraComments\Traits\{Commentable, Commenter};
 
-class User extends Model
+class User extends Authenticatable
 {
-    use HaveComments;
+    use Commenter;
 }
-
-use Rockbuzz\LaraComments\Traits\Commentable;
 
 class Post extends Model
 {
@@ -44,31 +42,38 @@ class Post extends Model
 
 #### User
 ```php
-$post->comments; //Collection;
-$post->hasComments(); //bool;
+$user->comments(): HasMany;
+$user->commentOn(Model $commentable, string $body, string $title = null): Comment;
+$user->likes(): BelongsToMany;
+$user->likeTo(Comment $comment): void;
+$user->dislikeTo(Comment $comment): void;
 ```
 
 #### Post
 ```php
-$post->commenter: //User
-$post->commentable; //Collection;
-$post->asPending($comment); //void;
-$post->approve($comment); //void;
-$post->unapprove($comment); //void;
+$post->comments(): MorphMany;
+$post->hasComments(): bool;
+$post->asPending($comment): void;
+$post->approve($comment): void;
+$post->unapprove($comment): void;
 ```
 
 #### Comment
 ```php
-$comment->isPending(); //bool;
-$comment->isApprove(); //bool;
-$comment->isUnapprove(); //bool;
+$comment->commenter(): BelongsTo;
+$comment->commentable(): MorphTo;
+$comment->children(): HasMany;
+$comment->parent(): BelongsTo
+$comment->isPending(): bool;
+$comment->isApprove(): bool;
+$comment->isUnapprove(): bool;
 ```
 
 Scope
 ```php
-Comment::approved(); //Builder;
-Comment::pending(); //Builder;
-Comment::unapproved(); //Builder;
+Comment::approved();
+Comment::pending();
+Comment::unapproved();
 ```
 
 #### Events

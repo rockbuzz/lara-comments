@@ -2,13 +2,13 @@
 
 namespace Tests;
 
-use Rockbuzz\LaraUuid\Traits\Uuid;
-use Tests\Stubs\{Post, Commenter};
-use Illuminate\Support\Facades\Config;
+use PDOException;
+use Tests\Stubs\{Post, User};
+use Illuminate\Support\Facades\DB;
 use Rockbuzz\LaraComments\Models\Comment;
 use Rockbuzz\LaraComments\Enums\{Status};
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo, BelongsTo};
+use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo, BelongsTo, BelongsToMany};
 
 class CommentTest extends TestCase
 {
@@ -21,10 +21,10 @@ class CommentTest extends TestCase
         $this->comment = new Comment();
     }
 
-    public function testIfUsesTraits()
+    /** @test */
+    public function comment_uses_traits()
     {
         $expected = [
-            Uuid::class,
             SoftDeletes::class
         ];
 
@@ -34,39 +34,28 @@ class CommentTest extends TestCase
         );
     }
 
-    public function testIncrementing()
-    {
-        $this->assertFalse($this->comment->incrementing);
-    }
-
-    public function testKeyType()
-    {
-        $this->assertEquals('string', $this->comment->getKeyType());
-    }
-
-    public function testFillable()
+    /** @test */
+    public function comment_has_fillable()
     {
         $expected = [
             'title',
             'body',
-            'likes',
             'type',
             'status',
+            'user_id',
             'parent_id',
             'commentable_id',
-            'commentable_type',
-            'commenter_id',
-            'commenter_type'
+            'commentable_type'
         ];
 
         $this->assertEquals($expected, $this->comment->getFillable());
     }
 
-    public function testCasts()
+    /** @test */
+    public function comment_has_casts()
     {
         $expected = [
-            'id' => 'string',
-            'likes' => 'integer',
+            'id' => 'int',
             'type' => 'integer',
             'status' => 'integer'
         ];
@@ -74,7 +63,8 @@ class CommentTest extends TestCase
         $this->assertEquals($expected, $this->comment->getCasts());
     }
 
-    public function testDates()
+    /** @test */
+    public function comment_has_dates()
     {
         $this->assertEquals(
             array_values(['deleted_at', 'created_at', 'updated_at']),
@@ -82,21 +72,20 @@ class CommentTest extends TestCase
         );
     }
 
-    public function testCommentHasCommenter()
+    /** @test */
+    public function comment_has_user()
     {
-        Config::set('comments.models.commenter', Commenter::class);
-
-        $commenter = $this->create(Commenter::class);
+        $commenter = $this->create(User::class);
         $comment = $this->create(Comment::class, [
-            'commenter_id' => $commenter->id,
-            'commenter_type' => Commenter::class
+            'user_id' => $commenter->id
         ]);
 
-        $this->assertInstanceOf(MorphTo::class, $comment->commenter());
+        $this->assertInstanceOf(BelongsTo::class, $comment->commenter());
         $this->assertEquals($commenter->id, $comment->commenter->id);
     }
 
-    public function testCommentHasCommentable()
+    /** @test */
+    public function comment_has_commentable()
     {
         $post = $this->create(Post::class);
 
@@ -109,7 +98,8 @@ class CommentTest extends TestCase
         $this->assertEquals($post->id, $comment->commentable->id);
     }
 
-    public function testCommentCanHaveChildren()
+    /** @test */
+    public function comment_can_have_children()
     {
         $comment = $this->create(Comment::class);
 
@@ -121,7 +111,8 @@ class CommentTest extends TestCase
         $this->assertContains($children->id, $comment->children->pluck('id'));
     }
 
-    public function testCommentCanHaveParent()
+    /** @test */
+    public function comment_can_have_parent()
     {
         $parent = $this->create(Comment::class);
 
@@ -133,7 +124,8 @@ class CommentTest extends TestCase
         $this->assertEquals($parent->id, $comment->parent->id);
     }
 
-    public function testCommentIsPending()
+    /** @test */
+    public function comment_is_pending()
     {
         $comment = factory(Comment::class)->states(Status::APPROVED)->create();
 
@@ -144,7 +136,8 @@ class CommentTest extends TestCase
         $this->assertTrue($comment->isPending());
     }
 
-    public function testCommentIsApproved()
+    /** @test */
+    public function comment_is_approved()
     {
         $comment = factory(Comment::class)->states(Status::PENDING)->create();
 
@@ -155,7 +148,8 @@ class CommentTest extends TestCase
         $this->assertTrue($comment->isApproved());
     }
 
-    public function testCommentIsUnapproved()
+    /** @test */
+    public function comment_is_unapproved()
     {
         $comment = factory(Comment::class)->states(Status::PENDING)->create();
 
@@ -166,45 +160,48 @@ class CommentTest extends TestCase
         $this->assertTrue($comment->isUnapproved());
     }
 
-    public function testCommentScopePending()
+    /** @test */
+    public function comment_has_scope_pending()
     {
         $pendingComments = factory(Comment::class, 5)->states(Status::PENDING)->create();
         $approvedComment = factory(Comment::class)->states(Status::APPROVED)->create();
-        $disapprovedComment = factory(Comment::class)->states(Status::UNAPPROVED)->create();
+        $unapprovedComment = factory(Comment::class)->states(Status::UNAPPROVED)->create();
 
         $pendingComments->each(function ($comment) {
             $this->assertContains($comment->id, Comment::pending()->get()->pluck('id'));
         });
 
         $this->assertNotContains($approvedComment->id, Comment::pending()->get()->pluck('id'));
-        $this->assertNotContains($disapprovedComment->id, Comment::pending()->get()->pluck('id'));
+        $this->assertNotContains($unapprovedComment->id, Comment::pending()->get()->pluck('id'));
     }
 
-    public function testCommentScopeApproved()
+    /** @test */
+    public function comment_has_scope_approved()
     {
         $pendingComment = factory(Comment::class)->states(Status::PENDING)->create();
         $approvedComments = factory(Comment::class, 5)->states(Status::APPROVED)->create();
-        $disapprovedComment = factory(Comment::class)->states(Status::UNAPPROVED)->create();
+        $unapprovedComment = factory(Comment::class)->states(Status::UNAPPROVED)->create();
 
         $approvedComments->each(function ($comment) {
             $this->assertContains($comment->id, Comment::approved()->get()->pluck('id'));
         });
 
         $this->assertNotContains($pendingComment->id, Comment::approved()->get()->pluck('id'));
-        $this->assertNotContains($disapprovedComment->id, Comment::approved()->get()->pluck('id'));
+        $this->assertNotContains($unapprovedComment->id, Comment::approved()->get()->pluck('id'));
     }
 
-    public function testCommentScopeDisapproved()
+    /** @test */
+    public function comment_has_scope_unapproved()
     {
         $pendingComment = factory(Comment::class)->states(Status::PENDING)->create();
         $approvedComment = factory(Comment::class)->states(Status::APPROVED)->create();
-        $disapprovedComments = factory(Comment::class, 5)->states(Status::UNAPPROVED)->create();
+        $unapprovedComments = factory(Comment::class, 5)->states(Status::UNAPPROVED)->create();
 
-        $disapprovedComments->each(function ($comment) {
-            $this->assertContains($comment->id, Comment::disapproved()->get()->pluck('id'));
+        $unapprovedComments->each(function ($comment) {
+            $this->assertContains($comment->id, Comment::unapproved()->get()->pluck('id'));
         });
 
-        $this->assertNotContains($pendingComment->id, Comment::disapproved()->get()->pluck('id'));
-        $this->assertNotContains($approvedComment->id, Comment::disapproved()->get()->pluck('id'));
+        $this->assertNotContains($pendingComment->id, Comment::unapproved()->get()->pluck('id'));
+        $this->assertNotContains($approvedComment->id, Comment::unapproved()->get()->pluck('id'));
     }
 }

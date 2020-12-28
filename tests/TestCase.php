@@ -2,7 +2,8 @@
 
 namespace Tests;
 
-use Tests\Models\User;
+use Tests\Stubs\User;
+use Illuminate\Support\Facades\Config;
 use Rockbuzz\LaraComments\ServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
@@ -26,6 +27,8 @@ class TestCase extends OrchestraTestCase
 
         $this->withFactories(__DIR__ . '/database/factories');
         $this->withFactories(__DIR__.'/../src/database/factories');
+
+        Config::set('comments.models.commenter', User::class);
     }
 
 

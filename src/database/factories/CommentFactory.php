@@ -3,7 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use Faker\Generator as Faker;
-use Tests\Stubs\{Post, Commenter};
+use Tests\Stubs\{Post, User};
 use Rockbuzz\LaraComments\Models\Comment;
 use Rockbuzz\LaraComments\Enums\{Type, Status};
 
@@ -11,14 +11,12 @@ $factory->define(Comment::class, function (Faker $faker) {
     return [
         'title' => $faker->sentence,
         'body' => $faker->text,
-        'likes' => $faker->numberBetween(0, 10),
         'type' => Type::getRandomValue(),
         'status' => Status::getRandomValue(),
+        'user_id' => factory(User::class)->create()->id,
         'parent_id' => null,
         'commentable_id' => factory(Post::class)->create()->id,
-        'commentable_type' => Post::class,
-        'commenter_id' => factory(Commenter::class)->create()->id,
-        'commenter_type' => Commenter::class
+        'commentable_type' => Post::class
     ];
 });
 

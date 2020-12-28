@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rockbuzz\LaraComments\Traits;
 
 use Rockbuzz\LaraComments\Enums\Status;
@@ -11,19 +13,17 @@ trait Commentable
 {
     public function comments(): MorphMany
     {
-        return $this->morphMany(
-            config('comments.models.comment'),
-            config('comments.tables.morph_names.commentable')
-        )->whereNull('parent_id');
+        return $this->morphMany(Comment::class, 'commentable')
+            ->whereNull('parent_id');
     }
 
-    public function hasComments()
+    public function hasComments(): bool
     {
         return $this->comments()->exists();
     }
 
     /**
-     * @var Comment|string $comment instance or uuid
+     * @var Comment|int $comment
      */
     public function asPending($comment): void
     {
@@ -35,7 +35,7 @@ trait Commentable
     }
 
     /**
-     * @var Comment|string $comment instance or uuid
+     * @var Comment|int $comment
      */
     public function approve($comment): void
     {
@@ -47,8 +47,7 @@ trait Commentable
     }
 
     /**
-     * @var Comment|string $comment instance or uuid
-     */
+     * @var Comment|int $comment     */
     public function unapprove($comment): void
     {
         $comment = $this->commentResolve($comment);

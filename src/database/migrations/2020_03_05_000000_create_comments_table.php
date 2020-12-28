@@ -14,22 +14,32 @@ class CreateCommentsTable extends Migration
      */
     public function up()
     {
-        $columns = config('comments.tables.morph_columns');
-
-        Schema::create('comments', function (Blueprint $table) use ($columns) {
-            $table->uuid('id')->primary();
-            $table->string('title');
+        Schema::create('comments', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('title')->nullable();
             $table->text('body');
-            $table->integer('likes')->default(0);
             $table->smallInteger('type')->default(Type::DEFAULT);
             $table->smallInteger('status')->default(Status::PENDING);
-            $table->uuid('parent_id')->nullable();
-            $table->uuid($columns['commentable_id']);
-            $table->string($columns['commentable_type']);
-            $table->uuid($columns['commenter_id']);
-            $table->string($columns['commenter_type']);
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->morphs('commentable');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
+        });
+
+        Schema::create('likes', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('comment_id');
+            $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
+
+            $table->unique(['user_id', 'comment_id']);
         });
     }
 
@@ -40,6 +50,7 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('likes');
         Schema::dropIfExists('comments');
     }
 }

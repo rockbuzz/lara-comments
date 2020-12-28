@@ -2,35 +2,30 @@
 
 namespace Rockbuzz\LaraComments\Models;
 
-use Rockbuzz\LaraUuid\Traits\Uuid;
 use Illuminate\Database\Eloquent\Model;
 use Rockbuzz\LaraComments\Enums\Status;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\{Builder, SoftDeletes};
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Comment extends Model
 {
-    use Uuid, SoftDeletes;
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
+    use SoftDeletes;
 
     protected $fillable = [
         'title',
         'body',
-        'likes',
         'type',
         'status',
+        'user_id',
         'parent_id',
         'commentable_id',
-        'commentable_type',
-        'commenter_id',
-        'commenter_type'
+        'commentable_type'
     ];
 
     protected $casts = [
-        'id' => 'string',
-        'likes' => 'integer',
+        'id' => 'int',
         'type' => 'integer',
         'status' => 'integer'
     ];
@@ -41,22 +36,22 @@ class Comment extends Model
         'updated_at'
     ];
 
-    public function commenter()
+    public function commenter(): BelongsTo
     {
-        return $this->morphTo(config('comments.tables.morph_names.commenter'));
+        return $this->belongsTo(config('comments.models.commenter'), 'user_id');
     }
 
-    public function commentable()
+    public function commentable(): MorphTo
     {
-        return $this->morphTo(config('comments.tables.morph_names.commentable'));
+        return $this->morphTo('commentable');
     }
 
-    public function children()
+    public function children(): HasMany
     {
         return $this->hasMany(Comment::class, 'parent_id');
     }
 
-    public function parent()
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Comment::class, 'parent_id');
     }
@@ -86,7 +81,7 @@ class Comment extends Model
         return $query->whereStatus(Status::APPROVED);
     }
 
-    public function scopeDisapproved($query): Builder
+    public function scopeUnapproved($query): Builder
     {
         return $query->whereStatus(Status::UNAPPROVED);
     }

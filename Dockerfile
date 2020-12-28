@@ -4,18 +4,10 @@ LABEL maintainer="TiagoDevWeb"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update \
-    && apt-get -y --no-install-recommends install  php7.2-mysql php-redis php7.2-sqlite3 php-xdebug php7.2-gd php7.2-intl php-mongodb php-yaml \
+RUN apt-get -y update \
+    && apt-get -y --no-install-recommends install php7.2-sqlite3 php-xdebug\
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 
-RUN cd '/' \
-    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php composer-setup.php \
-    && php -r "unlink('composer-setup.php');" \
-    && mv composer.phar /usr/local/bin/composer
-
-RUN apt-get update \
-    && apt-get -y install git \
-    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
