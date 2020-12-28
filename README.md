@@ -2,7 +2,7 @@
 
 Comments is a package for managing comments on features like Posts
 
-[![Build Status](https://travis-ci.org/rockbuzz/lara-comments.svg?branch=master)](https://travis-ci.org/rockbuzz/lara-comments)
+<p><img src="https://github.com/rockbuzz/lara-comments/workflows/Main/badge.svg"/></p>
 
 ## Requirements
 
