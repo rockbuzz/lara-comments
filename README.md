@@ -6,7 +6,7 @@ Comments is a package for managing comments on features like Posts
 
 ## Requirements
 
-PHP >=7.2
+PHP >=7.3
 
 ## Install
 
