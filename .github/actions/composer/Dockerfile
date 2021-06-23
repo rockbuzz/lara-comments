@@ -1,4 +1,4 @@
-FROM composer:1
+FROM composer:latest
 
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

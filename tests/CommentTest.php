@@ -57,7 +57,8 @@ class CommentTest extends TestCase
         $expected = [
             'id' => 'int',
             'type' => 'integer',
-            'status' => 'integer'
+            'status' => 'integer',
+            'deleted_at' => 'datetime'
         ];
 
         $this->assertEquals($expected, $this->comment->getCasts());
