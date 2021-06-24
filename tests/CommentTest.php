@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use PDOException;
-use Tests\Stubs\{Post, User};
-use Illuminate\Support\Facades\DB;
+use Tests\Models\{Post, User};
 use Rockbuzz\LaraComments\Models\Comment;
 use Rockbuzz\LaraComments\Enums\{Status};
 use Illuminate\Database\Eloquent\SoftDeletes;

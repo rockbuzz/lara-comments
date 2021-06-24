@@ -3,7 +3,7 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use Faker\Generator as Faker;
-use Tests\Stubs\{Post, User};
+use Tests\Models\{Post, User};
 use Rockbuzz\LaraComments\Models\Comment;
 use Rockbuzz\LaraComments\Enums\{Type, Status};
 

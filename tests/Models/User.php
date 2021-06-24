@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Stubs;
+namespace Tests\Models;
 
 use Rockbuzz\LaraComments\Traits\Commenter;
 use Illuminate\Foundation\Auth\User as Authenticatable;

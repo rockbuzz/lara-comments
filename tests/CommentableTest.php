@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use Tests\Stubs\Post;
+use Tests\Models\Post;
 use Illuminate\Support\Facades\Event;
 use Rockbuzz\LaraComments\Enums\Status;
 use Rockbuzz\LaraComments\Models\Comment;

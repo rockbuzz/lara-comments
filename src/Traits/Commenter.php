@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Rockbuzz\LaraComments\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Rockbuzz\LaraComments\Models\Comment;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\{HasMany, BelongsToMany};
 
 trait Commenter
 {

@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use Tests\Stubs\User;
+use Tests\Models\User;
 use Illuminate\Support\Facades\Config;
 use Rockbuzz\LaraComments\ServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;

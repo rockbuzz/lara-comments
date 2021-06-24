@@ -3,7 +3,7 @@
 namespace Tests;
 
 use PDOException;
-use Tests\Stubs\{User, Post};
+use Tests\Models\{User, Post};
 use Illuminate\Support\Facades\DB;
 use Rockbuzz\LaraComments\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
@@ -15,7 +15,7 @@ class CommenterTest extends TestCase
     {
         $user = $this->create(User::class);
         $post = $this->create(Post::class);
-        $comment = $this->create(Comment::class, [
+        $this->create(Comment::class, [
             'user_id' => $user->id,
             'commentable_id' => $post->id,
             'commentable_type' => Post::class

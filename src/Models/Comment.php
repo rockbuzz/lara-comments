@@ -2,12 +2,10 @@
 
 namespace Rockbuzz\LaraComments\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Rockbuzz\LaraComments\Enums\Status;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\{Builder, SoftDeletes};
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\{Model, Builder, SoftDeletes};
+use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo};
 
 class Comment extends Model
 {
