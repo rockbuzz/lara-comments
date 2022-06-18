@@ -29,18 +29,6 @@ class CreateCommentsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
         });
-
-        Schema::create('likes', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('comment_id');
-            $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('comment_id')->references('id')->on('comments')->onDelete('cascade');
-
-            $table->unique(['user_id', 'comment_id']);
-        });
     }
 
     /**
@@ -50,7 +38,6 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('likes');
         Schema::dropIfExists('comments');
     }
 }

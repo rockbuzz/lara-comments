@@ -17,7 +17,7 @@ class TestCase extends OrchestraTestCase
 
         $this->loadMigrationsFrom([
             '--database' => 'testing',
-            '--path' => realpath(__DIR__ . '/../src/database/migrations'),
+            '--path' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->loadMigrationsFrom([
@@ -26,7 +26,7 @@ class TestCase extends OrchestraTestCase
         ]);
 
         $this->withFactories(__DIR__ . '/database/factories');
-        $this->withFactories(__DIR__.'/../src/database/factories');
+        $this->withFactories(__DIR__.'/../database/factories');
 
         Config::set('comments.models.commenter', User::class);
     }

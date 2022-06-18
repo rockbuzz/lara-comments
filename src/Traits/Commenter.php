@@ -6,7 +6,7 @@ namespace Rockbuzz\LaraComments\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Rockbuzz\LaraComments\Models\Comment;
-use Illuminate\Database\Eloquent\Relations\{HasMany, BelongsToMany};
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait Commenter
 {
@@ -23,22 +23,5 @@ trait Commenter
             'commentable_id' => $commentable->id,
             'commentable_type' => get_class($commentable)
         ]);
-    }
-
-    public function likes(): BelongsToMany
-    {
-        return $this->belongsToMany(Comment::class, 'likes')
-            ->withTimestamps()
-            ->as('likes');
-    }
-
-    public function likeTo(Comment $comment): void
-    {
-        $this->likes()->attach($comment);
-    }
-
-    public function dislikeTo(Comment $comment): void
-    {
-        $this->likes()->detach($comment);
     }
 }
