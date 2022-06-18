@@ -6,6 +6,8 @@ use Rockbuzz\LaraComments\Enums\Status;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\{Model, Builder, SoftDeletes};
 use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo};
+use Rockbuzz\LaraComments\Events\CommentCreatedEvent;
+use Rockbuzz\LaraComments\Events\CommentDeletedEvent;
 
 class Comment extends Model
 {
@@ -32,6 +34,11 @@ class Comment extends Model
         'deleted_at',
         'created_at',
         'updated_at'
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => CommentCreatedEvent::class,
+        'deleted' => CommentDeletedEvent::class
     ];
 
     public function commenter(): BelongsTo
