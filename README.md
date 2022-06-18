@@ -44,9 +44,6 @@ class Post extends Model
 ```php
 $user->comments(): HasMany;
 $user->commentOn(Model $commentable, string $body, string $title = null): Comment;
-$user->likes(): BelongsToMany;
-$user->likeTo(Comment $comment): void;
-$user->dislikeTo(Comment $comment): void;
 ```
 
 #### Post
@@ -81,6 +78,8 @@ Comment::unapproved();
 \Rockbuzz\LaraComments\Events\AsPendingEvent::class;
 \Rockbuzz\LaraComments\Events\ApprovedEvent::class;
 \Rockbuzz\LaraComments\Events\UnapprovedEvent::class;
+\Rockbuzz\LaraComments\Events\CommentCreatedEvent::class;
+\Rockbuzz\LaraComments\Events\CommentDeletedEvent::class;
 ```
 
 
