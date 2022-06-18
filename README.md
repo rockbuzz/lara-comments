@@ -11,7 +11,7 @@ PHP >=7.3
 ## Install
 
 ```bash
-$ composer require rockbuzz/lara-comments
+$ composer require rockbuzz/lara-comments:dev-idt-main
 ```
 
 ```bash
