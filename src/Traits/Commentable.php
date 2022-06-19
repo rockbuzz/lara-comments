@@ -13,7 +13,7 @@ trait Commentable
 {
     public function comments(): MorphMany
     {
-        return $this->morphMany(Comment::class, 'commentable')
+        return $this->morphMany(config('comments.models.comment'), 'commentable')
             ->whereNull('parent_id');
     }
 
@@ -63,6 +63,6 @@ trait Commentable
      */
     private function commentResolve($comment): Comment
     {
-        return is_a($comment, Comment::class) ? $comment : Comment::findOrFail($comment);
+        return is_a($comment, config('comments.models.comment')) ? $comment : Comment::findOrFail($comment);
     }
 }

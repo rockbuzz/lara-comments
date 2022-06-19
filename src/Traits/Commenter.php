@@ -12,7 +12,7 @@ trait Commenter
 {
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(config('comments.models.comment'));
     }
 
     public function commentOn(Model $commentable, string $body, string $title = null): Comment
