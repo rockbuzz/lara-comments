@@ -4,13 +4,14 @@ namespace Rockbuzz\LaraComments\Models;
 
 use Rockbuzz\LaraComments\Enums\Status;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\{Model, Builder, SoftDeletes};
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\{HasMany, MorphTo};
-use Rockbuzz\LaraComments\Events\CommentCreatedEvent;
-use Rockbuzz\LaraComments\Events\CommentDeletedEvent;
+use Illuminate\Database\Eloquent\{Model, Builder, SoftDeletes};
+use Rockbuzz\LaraComments\Events\{CommentCreatedEvent, CommentDeletedEvent};
 
 class Comment extends Model
 {
+    use HasFactory;
     use SoftDeletes;
 
     protected $fillable = [
@@ -53,12 +54,12 @@ class Comment extends Model
 
     public function children(): HasMany
     {
-        return $this->hasMany(Comment::class, 'parent_id');
+        return $this->hasMany(__CLASS__, 'parent_id');
     }
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Comment::class, 'parent_id');
+        return $this->belongsTo(__CLASS__, 'parent_id');
     }
 
     public function isPending(): bool

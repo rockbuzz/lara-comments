@@ -7,14 +7,9 @@ use Rockbuzz\LaraComments\Enums\{Status, Type};
 
 class CreateCommentsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
+    public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('comments', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title')->nullable();
             $table->text('body');
@@ -30,7 +25,7 @@ class CreateCommentsTable extends Migration
             $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
         });
 
-        Schema::create('likes', function (Blueprint $table) {
+        Schema::create('likes', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('comment_id');
@@ -43,12 +38,7 @@ class CreateCommentsTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('likes');
         Schema::dropIfExists('comments');

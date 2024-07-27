@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests;
+namespace Rockbuzz\LaraComments\Tests;
 
-use Tests\Models\Post;
+use Rockbuzz\LaraComments\Tests\Models\Post;
 use Illuminate\Support\Facades\Event;
 use Rockbuzz\LaraComments\Enums\Status;
 use Rockbuzz\LaraComments\Models\Comment;
@@ -13,8 +13,8 @@ class CommentableTest extends TestCase
 {
     public function testPostCanHaveComments()
     {
-        $post = $this->create(Post::class);
-        $comment = $this->create(Comment::class, [
+        $post = Post::factory()->create();
+        $comment = Comment::factory()->create([
             'commentable_id' => $post->id,
             'commentable_type' => Post::class
         ]);
@@ -25,11 +25,11 @@ class CommentableTest extends TestCase
 
     public function testPostHasComments()
     {
-        $post = $this->create(Post::class);
+        $post = Post::factory()->create();
 
         $this->assertFalse($post->hasComments());
 
-        $this->create(Comment::class, [
+        Comment::factory()->create([
             'commentable_id' => $post->id,
             'commentable_type' => Post::class
         ]);
@@ -41,9 +41,9 @@ class CommentableTest extends TestCase
     {
         Event::fake([AsPendingEvent::class]);
 
-        $post = $this->create(Post::class);
+        $post = Post::factory()->create();
 
-        $comment = $this->create(Comment::class, [
+        $comment = Comment::factory()->create([
             'status' => Status::APPROVED,
             'commentable_id' => $post->id,
             'commentable_type' => Post::class
@@ -74,9 +74,9 @@ class CommentableTest extends TestCase
     {
         Event::fake([ApprovedEvent::class]);
 
-        $post = $this->create(Post::class);
+        $post = Post::factory()->create();
 
-        $comment = $this->create(Comment::class, [
+        $comment = Comment::factory()->create([
             'status' => Status::PENDING,
             'commentable_id' => $post->id,
             'commentable_type' => Post::class
@@ -107,9 +107,9 @@ class CommentableTest extends TestCase
     {
         Event::fake([UnapprovedEvent::class]);
 
-        $post = $this->create(Post::class);
+        $post = Post::factory()->create();
 
-        $comment = $this->create(Comment::class, [
+        $comment = Comment::factory()->create([
             'status' => Status::PENDING,
             'commentable_id' => $post->id,
             'commentable_type' => Post::class

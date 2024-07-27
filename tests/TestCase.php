@@ -1,10 +1,11 @@
 <?php
 
-namespace Tests;
+namespace Rockbuzz\LaraComments\Tests;
 
-use Tests\Models\User;
+use Rockbuzz\LaraComments\Tests\Models\User;
 use Illuminate\Support\Facades\Config;
 use Rockbuzz\LaraComments\ServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
@@ -17,7 +18,7 @@ class TestCase extends OrchestraTestCase
 
         $this->loadMigrationsFrom([
             '--database' => 'testing',
-            '--path' => realpath(__DIR__ . '/../src/database/migrations'),
+            '--path' => realpath(__DIR__ . '/../database/migrations'),
         ]);
 
         $this->loadMigrationsFrom([
@@ -25,8 +26,11 @@ class TestCase extends OrchestraTestCase
             '--path' => realpath(__DIR__ . '/database/migrations'),
         ]);
 
-        $this->withFactories(__DIR__ . '/database/factories');
-        $this->withFactories(__DIR__.'/../src/database/factories');
+        $baseFactoryPath = 'Rockbuzz\\LaraComments\\Tests\\Database\\Factories\\';
+
+        Factory::guessFactoryNamesUsing(
+            static fn(string $modelName) => $baseFactoryPath . class_basename($modelName) . 'Factory'
+        );
 
         Config::set('comments.models.commenter', User::class);
     }
@@ -47,15 +51,5 @@ class TestCase extends OrchestraTestCase
     {
         $this->actingAs($user ?: $this->create(User::class, $attributes));
         return $this;
-    }
-
-    protected function create(string $class, array $attributes = [], int $times = null)
-    {
-        return factory($class, $times)->create($attributes);
-    }
-
-    protected function make(string $class, array $attributes = [], int $times = null)
-    {
-        return factory($class, $times)->make($attributes);
     }
 }

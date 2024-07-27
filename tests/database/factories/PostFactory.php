@@ -1,13 +1,19 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Rockbuzz\LaraComments\Tests\Database\Factories;
 
-use Tests\Models\Post;
-use Faker\Generator as Faker;
+use Rockbuzz\LaraComments\Tests\Models\Post;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Post::class, function (Faker $faker) {
-    return [
-        'title' => $faker->sentence,
-        'content' => $faker->text
-    ];
-});
+class PostFactory extends Factory
+{
+    protected $model = Post::class;
+
+    public function definition(): array
+    {
+        return [
+            'title' => $this->faker->sentence,
+            'content' => $this->faker->text
+        ];
+    }
+}

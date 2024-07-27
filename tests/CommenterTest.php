@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests;
+namespace Rockbuzz\LaraComments\Tests;
 
 use PDOException;
-use Tests\Models\{User, Post};
+use Rockbuzz\LaraComments\Tests\Models\{User, Post};
 use Illuminate\Support\Facades\DB;
 use Rockbuzz\LaraComments\Models\Comment;
 use Illuminate\Database\Eloquent\Relations\{BelongsToMany, HasMany};
@@ -13,9 +13,9 @@ class CommenterTest extends TestCase
     /** @test */
     public function commenter_can_have_comments()
     {
-        $user = $this->create(User::class);
-        $post = $this->create(Post::class);
-        $this->create(Comment::class, [
+        $user = User::factory()->create();
+        $post = Post::factory()->create();
+        Comment::factory()->create([
             'user_id' => $user->id,
             'commentable_id' => $post->id,
             'commentable_type' => Post::class
@@ -28,8 +28,8 @@ class CommenterTest extends TestCase
     /** @test */
     public function commenter_can_comment_on()
     {
-        $user = $this->create(User::class);
-        $post = $this->create(Post::class);
+        $user = User::factory()->create();
+        $post = Post::factory()->create();
 
         $comment = $user->commentOn($post, 'comment body', 'comment title');
 
@@ -43,8 +43,8 @@ class CommenterTest extends TestCase
     /** @test */
     public function comment_can_have_likes()
     {
-        $user = $this->create(User::class);
-        $comment = $this->create(Comment::class);
+        $user = User::factory()->create();
+        $comment = Comment::factory()->create();
 
         DB::table('likes')->insert([
             'user_id' => $user->id,
@@ -58,8 +58,8 @@ class CommenterTest extends TestCase
     /** @test */
     public function comment_can_like()
     {
-        $user = $this->create(User::class);
-        $comment = $this->create(Comment::class);
+        $user = User::factory()->create();
+        $comment = Comment::factory()->create();
 
         $user->likeTo($comment);
 
@@ -70,8 +70,8 @@ class CommenterTest extends TestCase
     /** @test */
     public function comment_can_dislike()
     {
-        $user = $this->create(User::class);
-        $comment = $this->create(Comment::class);
+        $user = User::factory()->create();
+        $comment = Comment::factory()->create();
 
         DB::table('likes')->insert([
             'user_id' => $user->id,
@@ -87,8 +87,8 @@ class CommenterTest extends TestCase
     /** @test */
     public function comment_like_must_return_pdo_exception_when_record_already_exists()
     {
-        $user = $this->create(User::class);
-        $comment = $this->create(Comment::class);
+        $user = User::factory()->create();
+        $comment = Comment::factory()->create();
 
         DB::table('likes')->insert([
             'user_id' => $user->id,
